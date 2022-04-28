@@ -1,0 +1,38 @@
+{% extends 'home.html' %}
+
+{% block title %}
+    热门电影
+{% endblock title%}
+
+{% block header %}
+    <div >
+    <h1>热门电影
+     <a class="btn-group-sm h3" href="m.html">可视化</a>
+    </h1>
+    </div>
+{% endblock header %}
+
+{% block body %}
+    <table  class="table table-striped table-dark table-bordered table-hover text-center ">
+        <thead>
+        <tr class="text-center">
+            <th class="text-center">id</th>
+            <th class="text-center">片名</th>
+            <th class="text-center">演员</th>
+            <th class="text-center">题材</th>
+            <th class="text-center">观看人数</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for nrow in nrows %}
+            <tr>
+                <td>{{ nrow.0 }}</td>
+                <td>{{ nrow.1 }}</td>
+                <td>{{ nrow.2 }}</td>
+                <td>{{ nrow.3 }}</td>
+                <td>{{ nrow.4 }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock body %}
