@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>词频统计饼图</title>
+            <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
+
+</head>
+<body>
+    <div id="fdc19247359240daa6ff5e5a789b8a6f" class="chart-container" style="width:2000px; height:1000px;"></div>
+    <script>
+        var chart_fdc19247359240daa6ff5e5a789b8a6f = echarts.init(
+            document.getElementById('fdc19247359240daa6ff5e5a789b8a6f'), 'white', {renderer: 'canvas'});
+        var option_fdc19247359240daa6ff5e5a789b8a6f = {
+    "backgroundColor": "#2c343c",
+    "animation": true,
+    "animationThreshold": 2000,
+    "animationDuration": 1000,
+    "animationEasing": "cubicOut",
+    "animationDelay": 0,
+    "animationDurationUpdate": 300,
+    "animationEasingUpdate": "cubicOut",
+    "animationDelayUpdate": 0,
+    "color": [
+        "blue",
+        "green",
+        "yellow",
+        "red",
+        "black",
+        "orange",
+        "perpo"
+    ],
+    "series": [
+        {
+            "type": "pie",
+            "name": "\u8bcd\u9891\u997c\u56fe ",
+            "clockwise": true,
+            "data": [
+                {
+                    "name": "\u5a46\u5a46",
+                    "value": 2
+                },
+                {
+                    "name": "\u6885\u5a18",
+                    "value": 1
+                },
+                {
+                    "name": "\u9006\u5149",
+                    "value": 1
+                },
+                {
+                    "name": "\u4e07\u6e23",
+                    "value": 1
+                },
+                {
+                    "name": "\u671d\u51f0",
+                    "value": 1
+                }
+            ],
+            "radius": [
+                "0%",
+                "75%"
+            ],
+            "center": [
+                "50%",
+                "50%"
+            ],
+            "label": {
+                "show": true,
+                "position": "top",
+                "margin": 8,
+                "formatter": "{b}: {c}"
+            },
+            "rippleEffect": {
+                "show": true,
+                "brushType": "stroke",
+                "scale": 2.5,
+                "period": 4
+            }
+        }
+    ],
+    "legend": [
+        {
+            "data": [
+                "\u5a46\u5a46",
+                "\u6885\u5a18",
+                "\u9006\u5149",
+                "\u4e07\u6e23",
+                "\u671d\u51f0"
+            ],
+            "selected": {},
+            "show": false,
+            "padding": 5,
+            "itemGap": 10,
+            "itemWidth": 25,
+            "itemHeight": 14
+        }
+    ],
+    "tooltip": {
+        "show": true,
+        "trigger": "item",
+        "triggerOn": "mousemove|click",
+        "axisPointer": {
+            "type": "line"
+        },
+        "showContent": true,
+        "alwaysShowContent": false,
+        "showDelay": 0,
+        "hideDelay": 100,
+        "textStyle": {
+            "fontSize": 14
+        },
+        "borderWidth": 0,
+        "padding": 5
+    },
+    "title": [
+        {
+            "text": "\u8bcd\u9891\u997c\u56fe",
+            "left": "center",
+            "top": "20",
+            "padding": 5,
+            "itemGap": 10,
+            "textStyle": {
+                "color": "#fff"
+            }
+        }
+    ]
+};
+        chart_fdc19247359240daa6ff5e5a789b8a6f.setOption(option_fdc19247359240daa6ff5e5a789b8a6f);
+    </script>
+</body>
+</html>

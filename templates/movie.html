@@ -1,15 +1,19 @@
 {% extends 'home.html' %}
 
 {% block title %}
-    热门电影
+    电影榜单
 {% endblock title%}
 
 {% block header %}
-    <div >
-    <h1>热门电影
-     <a class="btn-group-sm h3" href="m.html">可视化</a>
+    <h1>电影榜单
+     <a class="btn-group-sm h3" href="movieBar.html">柱状图</a>
+                 <a class="btn-group-sm h3" href="movieeffectscatter.html">涟漪图</a>
+         <a class="btn-group-sm h3" href="moviepictorialbar.html">象形图</a>
+         <a class="btn-group-sm h3" href="moviepie.html">饼图</a>
+         <a class="btn-group-sm h3" href="moviefunnel.html">漏斗图</a>
+        <a class="btn-group-sm h3" href="movieWordcloud.html">词云图</a>
+        <a class="btn-group-sm h5" style="padding-left: 700px" href="/file1_down">下载</a>
     </h1>
-    </div>
 {% endblock header %}
 
 {% block body %}

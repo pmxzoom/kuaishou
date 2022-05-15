@@ -1,34 +1,31 @@
-import os
-
-import pymysql
-import requests
+import codecs
 import re
-import json
-import csv
+
+import jieba
+import matplotlib
 import pyecharts.options as opts
-import values as values
-from pyecharts.charts import Line, Bar, Pie, WordCloud
-import pandas as pd
-import xlwings as xw
+import requests
+from matplotlib import pyplot as plt
+from pyecharts.charts import EffectScatter, PictorialBar, Pie, Funnel
 
 #### csv文件
-#f = open('list.csv',mode='w',encoding='utf-8',newline='')
-#csv_writer = csv.DictWriter(f,fieldnames=[
+# f = open('list.csv',mode='w',encoding='utf-8',newline='')
+# csv_writer = csv.DictWriter(f,fieldnames=[
 #   '排名',
 #   '标题',
 #   '热度',
 #   '种类',
-#])
-#csv_writer.writeheader()
-#url = 'https://www.kuaishou.com'
-#headers = {
+# ])
+# csv_writer.writeheader()
+# url = 'https://www.kuaishou.com'
+# headers = {
 #   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:99.0) Gecko/20100101 Firefox/99.0'
-#}
-#response = requests.get(url=url, headers=headers)
-#list = re.findall(
+# }
+# response = requests.get(url=url, headers=headers)
+# list = re.findall(
 #   '{"rank":(.*?),"id":"(.*?)","name":"(.*?)","viewCount":null,"hotValue":"(.*?)w","iconUrl":(.*?),"poster":\"(.*?)\","tagType":(.*?),"__typename":"VisionHotRankItem"}',
 #   response.text)
-#for rank,id,name,hotValue,iconUrl,poster,tagType in list:
+# for rank,id,name,hotValue,iconUrl,poster,tagType in list:
 #  print(rank,id,name,hotValue,iconUrl,poster,tagType)
 #  dit =  {
 #      '排名':rank,
@@ -127,43 +124,44 @@ import xlwings as xw
 
 
 ### 绘图
-#from pyecharts.globals import ThemeType
-#from pymysql import *
+from pyecharts.globals import ThemeType, SymbolType
+from pymysql import *
+from twisted import words
+
+namelist = []
+numlist = []
+
+
+def getdata():
+   conn = connect(host='127.0.0.1',
+                  port=3306,
+                  user='root',
+                  password='root',
+                  db='kuaishou',
+                  charset='utf8')
+   cursor = conn.cursor()
+   try:
+
+       sql_name = """ SELECT 标题 FROM data_billboard """
+       cursor.execute(sql_name)
+       names = cursor.fetchall()
+       for name in names:
+           namelist.append(name[0])
+       print(namelist)
+       sql_num = """ SELECT 热度 FROM data_billboard """
+       cursor.execute(sql_num)
+       nums = cursor.fetchall()
+       for num in nums:
+           numlist.append(num[0])
+       print(numlist)
+   except:
+       print("未查询到数据！")
+       conn.rollback()
+   finally:
+       conn.close()
 #
-#namelist = []
-#numlist = []
 #
-#
-#def getdata():
-#    conn = connect(host='127.0.0.1',
-#                   port=3306,
-#                   user='root',
-#                   password='root',
-#                   db='kuaishou',
-#                   charset='utf8')
-#    cursor = conn.cursor()
-#    try:
-#
-#        sql_name = """ SELECT 标题 FROM data_list """
-#        cursor.execute(sql_name)
-#        names = cursor.fetchall()
-#        for name in names:
-#            namelist.append(name[0])
-#        print(namelist)
-#        sql_num = """ SELECT 热度 FROM data_list """
-#        cursor.execute(sql_num)
-#        nums = cursor.fetchall()
-#        for num in nums:
-#            numlist.append(num[0])
-#        print(numlist)
-#    except:
-#        print("未查询到数据！")
-#        conn.rollback()
-#    finally:
-#        conn.close()
-#
-#
-#def drawecharts():
+# def drawecharts():
 #    bar = Bar(
 #        init_opts=opts.InitOpts(width="2000px",
 #                                height="1000px",
@@ -184,7 +182,134 @@ import xlwings as xw
 #    )
 #    bar.render()
 #
+#def drawEffectScatter():
+#   effectScatter  = EffectScatter(
+#       init_opts=opts.InitOpts(width="2000px",
+#                               height="1000px",
+#                               theme=ThemeType.WHITE,
+#                               page_title="观看人数涟漪散点图"
+#                               )
+#   )
+#   effectScatter.add_xaxis(namelist)
+#   effectScatter.add_yaxis("观看人数w", numlist)
+#   effectScatter.set_global_opts(
+#        title_opts=opts.TitleOpts(title="观看人数涟漪散点图"),
+#        xaxis_opts=opts.AxisOpts(splitline_opts=opts.SplitLineOpts(is_show=True),
+#                                 axislabel_opts=opts.LabelOpts(rotate=-45)),
+#        yaxis_opts=opts.AxisOpts(splitline_opts=opts.SplitLineOpts(is_show=True)),
+#    )
+#   effectScatter.render("effectscatter.html")
+
+#def drawPictorialBar():
+#    pictorialBar=PictorialBar(
+#        init_opts=opts.InitOpts(width="2000px",
+#                                height="1000px",
+#                                theme=ThemeType.WHITE,
+#                                page_title="观看人数象形柱图"
+#                                )
+#    )
+#    pictorialBar.add_xaxis(namelist)
+#    pictorialBar.add_yaxis(
+#        "观看人数",
+#        numlist,
+#        label_opts=opts.LabelOpts(is_show=False),
+#        symbol_size=5,
+#        symbol_repeat="fixed",
+#        symbol_offset=[0, 0],
+#        is_symbol_clip=True,
+#        symbol=SymbolType.ROUND_RECT,
+#    )
+#    pictorialBar.reversal_axis()
+#    pictorialBar.set_global_opts(
+#        title_opts=opts.TitleOpts(title="观看人数象形柱图"),
+#        xaxis_opts=opts.AxisOpts(is_show=False),
+#        yaxis_opts=opts.AxisOpts(
+#            axistick_opts=opts.AxisTickOpts(is_show=False),
+#            axisline_opts=opts.AxisLineOpts(
+#                linestyle_opts=opts.LineStyleOpts(opacity=0)
+#            ),
+#        ),
+#    )
+#    pictorialBar.render("pictorialbar_base.html")
 #
-#if __name__ == '__main__':
-#    getdata()
-#    drawecharts()
+#getdata()
+#drawPictorialBar()
+
+def wtxt():
+    url = 'https://www.kuaishou.com'
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:99.0) Gecko/20100101 Firefox/99.0'
+    }
+    response = requests.get(url=url, headers=headers)
+    list = re.findall(
+        '{"rank":(.*?),"id":"(.*?)","name":"(.*?)","viewCount":null,"hotValue":"(.*?)w","iconUrl":(.*?),"poster":\"(.*?)\","tagType":(.*?),"__typename":"VisionHotRankItem"}',
+        response.text)
+    with open('E:\\PyCharm\\kuaishou\\billboardname.txt', 'w', encoding='utf-8') as bf:
+        for rank, id, name, hotValue, iconUrl, poster, tagType in list:
+            bf.write(name + '\n')
+
+def drawpie():
+    """
+    中文分词统计
+    对两个词以上的次数进行统计
+        lcut 进行分词，返回分词后list列表
+    :return:
+    """
+    f = codecs.open("E:\\PyCharm\\kuaishou\\billboardname.txt", 'r', encoding='utf-8').read()
+    counts = {}
+    wordsList = jieba.lcut(f)
+    for word in wordsList:
+        word = word.replace("，", "").replace("！", "").replace("“", "") \
+            .replace("”", "").replace("。", "").replace("？", "").replace("：", "") \
+            .replace("...", "").replace("、", "").strip(' ').strip('\r\n')
+        if len(word) == 1 or word == "":
+            continue
+        else:
+            counts[word] = counts.get(word, 0) + 1  # 单词计数
+    items = list(counts.items())  # 将字典转为list
+    items.sort(key=lambda x: x[1], reverse=True)  # 根据单词出现次数降序排序
+    # 打印前15个
+    wc = {}
+    for i in range(5):
+        word, counter = items[i]
+        wc = dict(items)
+        print("单词：{},次数：{}".format(word, counter))
+    pie = Pie(init_opts=opts.InitOpts(width="2000px", height="1000px", bg_color="#2c343c",page_title="快手热榜词频统计饼图"))
+    pie.add("词频饼图 ", [list(z) for z in zip([i for i in wc.keys()][:5],[i for i in wc.values()][:5])])
+    pie.set_colors(["blue", "green", "yellow", "red", "black", "orange", "perpo"])
+    pie.set_global_opts(title_opts=opts.TitleOpts(title="词频饼图",pos_left="center",pos_top="20",title_textstyle_opts=opts.TextStyleOpts(color="#fff"),),legend_opts=opts.LegendOpts(is_show=False),)
+    pie.set_series_opts(label_opts=opts.LabelOpts(formatter="{b}: {c}"))
+    pie.render("pie_set_color.html")
+
+def drawFunnel():
+    f = codecs.open("E:\\PyCharm\\kuaishou\\billboardname.txt", 'r', encoding='utf-8').read()
+    counts = {}
+    wordsList = jieba.lcut(f)
+    for word in wordsList:
+        word = word.replace("，", "").replace("！", "").replace("“", "") \
+            .replace("”", "").replace("。", "").replace("？", "").replace("：", "") \
+            .replace("...", "").replace("、", "").strip(' ').strip('\r\n')
+        if len(word) == 1 or word == "":
+            continue
+        else:
+            counts[word] = counts.get(word, 0) + 1  # 单词计数
+    items = list(counts.items())  # 将字典转为list
+    items.sort(key=lambda x: x[1], reverse=True)  # 根据单词出现次数降序排序
+    # 打印前15个
+    wc = {}
+    for i in range(5):
+        word, counter = items[i]
+        wc = dict(items)
+        print("单词：{},次数：{}".format(word, counter))
+    funnnel = Funnel(init_opts=opts.InitOpts(width="2000px", height="1000px",page_title="快手热榜词频统计漏斗图"))
+    funnnel.add(
+        "词频统计",
+        [list(z) for z in zip([i for i in wc.keys()][:5],[i for i in wc.values()][:5])],
+        label_opts=opts.LabelOpts(position="inside"),
+    )
+    funnnel.set_global_opts(title_opts=opts.TitleOpts(title="快手热榜词频统计漏斗图"))
+    funnnel.render("funnel_label_inside.html")
+
+wtxt()
+drawpie()
+drawFunnel()
